@@ -32,6 +32,11 @@ app.get("/", homeController.getHomepage);
 app.get("/name/:myName",
     homeController.respondWithName);
 app.get("/about", homeController.getAbout);
+app.get("/contact", homeController.getContact);
+app.get("/error", homeController.getError);
+app.get("/feedback_form", homeController.getFeedback_Form);
+app.get("/login", homeController.getLogin);
+app.get("/thanks", homeController.getThanks);
 
 app.use(errorController.respondInternalError);
 app.use(errorController.respondNoResourceFound);
