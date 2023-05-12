@@ -12,18 +12,17 @@
 <div class="signup-box">
   <h1>Sign Up</h1>
   <h4>It's free and only takes a minute</h4>
-  <form>
+  <form action="/signup" method="post">
     <label>First Name</label>
-    <input type="text" placeholder="" />
+    <input type="text" placeholder="" name="firstname" />
     <label>Last Name</label>
-    <input type="text" placeholder="" />
+    <input type="text" placeholder="" name="lastname"/>
     <label>Email</label>
-    <input type="email" placeholder="" />
+    <input type="email" placeholder="" name="email"/>
     <label>Password</label>
-    <input type="password" placeholder="" />
+    <input type="password" placeholder="" name="password" />
     <label>Confirm Password</label>
-    <input type="password" placeholder="" />
-    <input type="button" value="Submit" />
+    <input type="submit" value="Submit"/>
     <closeform></closeform></form>
   <p>
     By clicking the Sign-Up button,you agree to our <br />
