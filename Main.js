@@ -3,6 +3,7 @@
     app = express(),
     homeController = require("./controllers/homeController");
     usersController = require("./controllers/usersController");
+    productController = require("./controllers/productController");
     layouts = require("express-ejs-layouts");
     errorController = require("./controllers/errorController");
     mongoose = require("mongoose");
