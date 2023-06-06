@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
     userID: Schema.Types.ObjectId,
-    name: {
+    fullName: {
     firstname: {
         type: String,
     required: true,
@@ -23,13 +23,30 @@ const userSchema = new Schema({
         required: true},
     products: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Product"}],
-timestamps: true}
+        ref: "Product"
+    }]
+}, {
+    timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' }
+});
 
+userSchema.pre("save", async function (next) {
+    try {
+        let user = this;
+        let tester = await users.findOne({ email: user.email });
 
-
-);
-
+        if (tester && tester.email === user.email) {
+            tester.name = user.name;
+            tester.password = user.password;
+            tester.products = user.products;
+            next();
+        } else {
+            next();
+        }
+    } catch (error) {
+        console.log(`Error in overwriting existing user: ${error.message}`);
+        next(error);
+    }
+});
 userSchema.virtual("fullname")
     .get(function() {
         return `${this.name.firstname} ${this.name.lastname}`;

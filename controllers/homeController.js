@@ -22,8 +22,19 @@ exports.getLogin= (req,res) => {
     res.render("login");
 }
 
+exports.getSignup= (req,res) => {
+    res.render("signup");
+}
+
+exports.getEditor= (req,res) => {
+    res.render("editor");
+}
+
 exports.getThanks= (req,res) => {
     res.render("thanks");
+}
+exports.getAllUsers= (req,res) => {
+    res.render("allUsers");
 }
 
 exports.respondWithName = (req, res) => {

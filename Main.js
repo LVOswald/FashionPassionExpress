@@ -54,13 +54,14 @@ app.get("/error", homeController.getError);
 app.get("/feedback_form", homeController.getFeedback_Form);
 app.get("/login", homeController.getLogin);
 app.get("/thanks", homeController.getThanks);
-app.get("/users", usersController.getAllUsers,
-    (req,res,next) => {
-    console.log(req.data);
-    res.send(req.data);
-    });
-app.get("/userPage", usersController.getUserPage);
+app.get("/allUsers", homeController.getAllUsers);
 app.post("/signup", usersController.saveUser);
+
+app.get("/users/:id", usersController.show, usersController.showView).
+app.get("/users/:id/edit", usersController.edit);
+app.put("/users/:id/update", usersController.update, usersController.redirectView);
+app.delete("/users/:id/delete", usersController.delete, usersController.redirectView)
+
 
 
 app.use(errorController.respondInternalError);
