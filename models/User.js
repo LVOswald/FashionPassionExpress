@@ -32,11 +32,9 @@ const userSchema = new Schema({
 userSchema.pre("save", async function (next) {
     try {
         let user = this;
-        let tester = await users.findOne({ email: user.email });
+        let tester = await User.findOne({ email: user.email });
 
-        if (tester && tester.email === user.email) {
-            tester.name = user.name;
-            tester.password = user.password;
+        if (tester.email === user.email) {
             tester.products = user.products;
             next();
         } else {

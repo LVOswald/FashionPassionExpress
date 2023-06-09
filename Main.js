@@ -15,7 +15,7 @@
         console.log("Successfully connected to MongoDB using Mongoose!")
     });
 
-    const User = require("./models/User");
+    let User = require("./models/User");
 
 
 
@@ -55,7 +55,28 @@ app.get("/feedback_form", homeController.getFeedback_Form);
 app.get("/login", homeController.getLogin);
 app.get("/thanks", homeController.getThanks);
 app.get("/allUsers", homeController.getAllUsers);
-app.post("/signup", usersController.saveUser);
+app.get("/signup", homeController.getSignup);
+app.post("/signupaction", (req, res) => {
+    let newUser = new User({
+        fullName: {
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
+        },
+        email: req.body.email,
+        password: req.body.password
+    });
+
+    newUser.save()
+        .then((result) => {
+            console.log('Model saved successfully', result);
+            res.render("thanks");
+        })
+        .catch((err) => {
+            console.error('Error saving model:', err);
+        });
+
+
+});
 
 app.get("/users/:id", usersController.show, usersController.showView);
 app.get("/users/:id/edit", usersController.edit);
