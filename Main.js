@@ -55,7 +55,7 @@ app.get("/feedback_form", homeController.getFeedback_Form);
 app.get("/login", homeController.getLogin);
 app.get("/thanks", homeController.getThanks);
 app.get("/allUsers", homeController.getAllUsers);
-app.get("/signup", usersController.saveUser);
+app.post("/signup", usersController.saveUser);
 
 app.get("/users/:id", usersController.show, usersController.showView);
 app.get("/users/:id/edit", usersController.edit);
