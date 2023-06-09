@@ -19,8 +19,8 @@ exports.getAllUsers = (req, res, next) => {
 exports.getUserPage = (req,res) => {
     res.render("contact");
 }
-exports.saveUser = (req, res, next) => {
-    let newUser = new User({
+exports.saveUser = (req, res) => {
+   let newUser = new User({
         firstname: req.body.firstname,
         lastname: req.body.lastname,
         email: req.body.email,
@@ -34,7 +34,6 @@ exports.saveUser = (req, res, next) => {
         })
         .catch((err) => {
             console.error('Error saving model:', err);
-            next(error);
         });
 
 };
