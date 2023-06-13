@@ -77,7 +77,7 @@ app.get("/about", homeController.getAbout);
 app.get("/contact", homeController.getContact);
 app.get("/error", homeController.getError);
 app.get("/feedback_form", homeController.getFeedback_Form);
-app.get("/login", homeController.getLogin);
+app.get("/loginpage", homeController.getLogin);
 app.get("/thanks", homeController.getThanks);
 app.get("/allUsers", homeController.getAllUsers);
 app.get("/signup", homeController.getSignup);
@@ -103,11 +103,11 @@ app.post("/signupaction", (req, res) => {
 
 });
 app.get("users/login", usersController.login);
-app.post("/users/create", usersController.validate,
-    usersController.create, usersController.redirectView);
 app.post("users/login",
     usersController.authenticate,
     usersController.redirectView);
+app.post("/users/create", usersController.validate,
+    usersController.create, usersController.redirectView);
 app.get("/users/:id", usersController.show, usersController.showView);
 app.get("/users/:id/edit", usersController.edit);
 app.put("/users/:id/update", usersController.update, usersController.redirectView);
