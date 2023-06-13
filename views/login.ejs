@@ -9,15 +9,15 @@
   />
 </head>
 <body>
-<div class="login-box">
+<div class="data-form">
   <h1>Login</h1>
-  <form>
-    <label>Email</label>
-    <input type="email" placeholder="" />
-    <label>Password</label>
-    <input type="password" placeholder="" />
-    <input type="button" value="Submit" />
-    <closeform></closeform></form>
+  <button action="/users/login" method="POST">
+    <label for="inputEmail">Email</label>
+    <input class="form-control" type="email" name="email" id="inputEmail" placeholder="Email Address" required />
+    <label for="inputPassword">Password</label>
+    <input class="form-control" type="password" name="password" id="inputPassword" placeholder="Password" required/>
+    <button class="btn btn-lg btn-primary btn-block" type="submit"/> Login </button>
+    </form>
 </div>
 </p>
 </body>

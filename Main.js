@@ -11,12 +11,36 @@
         {useNewUrlParser: true});
     db = mongoose.connection;
     mongoose.Promise = global.Promise;
+    methodOverride = require("method-override");
     db.once("open", () => {
         console.log("Successfully connected to MongoDB using Mongoose!")
     });
 
     let User = require("./models/User");
-
+app.get('/users', async (req, res) => {
+    try {
+        const users = await User.find(); // Retrieve all users from the collection
+        res.render('users', { users }); // Pass the users to the view template
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }});
+expressSession = require("express-session"),
+    cookieParser = require("cookie-parser"),
+    connectFlash = require("connect-flash");
+app.use(cookieParser("secret_passcode"));
+app.use(expressSession({
+    secret: "secret_passcode",
+    cookie: {
+        maxAge: 4000000
+    },
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(connectFlash());
+app.use((req, res, next) => {
+    res.locals.flashMessages = req.flash();
+    next();
+});
 
 
 
@@ -25,6 +49,7 @@
 app.set("port", process.env.PORT || 3000);
 app.use(layouts);
 app.use(express.static("public"));
+app.use(methodOverride("_method", {methods: ["POST","GET"]}));
 
 app.use(
     express.urlencoded({
@@ -77,7 +102,12 @@ app.post("/signupaction", (req, res) => {
 
 
 });
-
+app.get("users/login", usersController.login);
+app.post("/users/create", usersController.validate,
+    usersController.create, usersController.redirectView);
+app.post("users/login",
+    usersController.authenticate,
+    usersController.redirectView);
 app.get("/users/:id", usersController.show, usersController.showView);
 app.get("/users/:id/edit", usersController.edit);
 app.put("/users/:id/update", usersController.update, usersController.redirectView);

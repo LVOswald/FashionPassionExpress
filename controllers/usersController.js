@@ -1,4 +1,15 @@
-const User = require("../models/User");
+const User = require("../models/User"),
+    getUserParams = body => {
+        return {
+            name: {
+                first: body.first,
+                last: body.last
+            },
+            email: body.email,
+            password: body.password,
+            products: body.products
+        };
+    };
 
 exports.getAllUsers = (req, res, next) => {
     User.find({})
@@ -19,26 +30,49 @@ exports.getAllUsers = (req, res, next) => {
 exports.getUserPage = (req,res) => {
     res.render("contact");
 }
-exports.saveUser = (req, res) => {
-   let newUser = new User({
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
-        email: req.body.email,
-        password: req.body.password
-    });
-
-    newUser.save()
-        .then((result) => {
-            console.log('Model saved successfully', result);
-            res.render("thanks");
-        })
-        .catch((err) => {
-            console.error('Error saving model:', err);
+module.exports = {
+    index: (req, res, next) => {
+        User.find()
+            .then(users => {
+                res.locals.users = users;
+                next();
+            })
+            .catch(error => {
+                console.log(`Error fetching users: ${error.message}`);
+                next(error);
+            });
+    },
+    indexView: (req, res) => {
+        res.render("users/index", {
+            flashMessages: {
+                success: "Loaded all users!"
+            }
         });
-
-};
-const userController = {
-show: (req, res, next) => {
+    },
+    new: (req, res) => {
+        res.render("users/new");
+    },
+    create: (req, res, next) => {
+        let userParams = getUserParams(req.body);
+        User.create(userParams)
+            .then(user => {
+                req.flash("success", `${user.fullName}'s account created
+➥ successfully!`);
+                res.locals.redirect = "/users";
+                res.locals.user = user;
+                next();
+            })
+            .catch(error => {
+                console.log(`Error saving user: ${error.message}`);
+                res.locals.redirect = "/users/new";
+                req.flash(
+                    "error",
+                    `Failed to create user account because: ➥${error.message}.`
+                );
+                next();
+            });
+    },
+    show: (req, res, next) => {
     let userId = req.params.id;
     User.findById(userId)
         .then(user => {
@@ -51,7 +85,7 @@ show: (req, res, next) => {
         });
 },
     showView: (req, res) => {
-    res.render("allUsers");
+    res.render("thanks");
 },
 
 edit: (req, res, next) => {
@@ -106,7 +140,66 @@ update: (req, res, next) => {
         let redirectPath = res.locals.redirect;
         if (redirectPath) res.redirect(redirectPath);
         else next();
-    }
+    },
+    login: (req, res) => {
+        res.render("users/login");
+    },
+    authenticate: (req, res, next) => {
+        User.findOne({email: req.body.email})
+            .then(user => {
+                if (user) {
+                    user.passwordComparison(req.body.password)
+                        .then(passwordsMatch => {
+                            if (passwordsMatch) {
+                                res.locals.redirect = `/users/${user._id}`;
+                                req.flash("success", `${user.fullName}'s logged in successfully!`);
+                                res.locals.user = user;
+                            } else {
+                                req.flash("error", "Failed to log in user account Incorrect Password.");
+                                res.locals.redirect = "/users/login";
+                            }
+                            next();
+                        });
+                } else {
+                    req.flash("error", "Failed to log in user account: User account not found.");
+                    res.locals.redirect = "/users/login";
+                    next();
+                }
+            })
+            .catch(error => {
+                console.log(`Error logging in user: ${error.message}`);
+                next(error);
+            });
+    },
+        validate: (req, res, next) => {
+            req
+                .sanitizeBody("email")
+                .normalizeEmail({
+                    all_lowercase: true
+                })
+                .trim();
+            req.check("email", "Email is invalid").isEmail();
+            req
+                .check("zipCode", "Zip code is invalid")
+                .notEmpty()
+                .isInt()
+                .isLength({
+                    min: 5,
+                    max: 5
+                })
+                .equals(req.body.zipCode);
+            req.check("password", "Password cannot be empty").notEmpty();
 
+            req.getValidationResult().then(error => {
+                if (!error.isEmpty()) {
+                    let messages = error.array().map(e => e.msg);
+                    req.skip = true;
+                    req.flash("error", messages.join(" and "));
+                    res.locals.redirect = "/users/new";
+                    next();
+                } else {
+                    next();
+                }
+            });
+        }
 };
-module.exports = userController;

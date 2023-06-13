@@ -1,5 +1,5 @@
 exports.getHomepage = (req,res) => {
-    res.render("index");
+    res.render("users/index");
 }
 
 exports.getAbout= (req,res) => {
@@ -27,14 +27,14 @@ exports.getSignup= (req,res) => {
 }
 
 exports.getEditor= (req,res) => {
-    res.render("editor");
+    res.render("users/editor");
 }
 
 exports.getThanks= (req,res) => {
     res.render("thanks");
 }
 exports.getAllUsers= (req,res) => {
-    res.render("allUsers");
+    res.render("users");
 }
 
 exports.respondWithName = (req, res) => {

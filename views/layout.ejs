@@ -2,4 +2,13 @@
 <div id="nav">NAVIGATION</div>
 <%- body %>
 <div id="footer">FOOTER</div>
+<div class="flashes">
+    <% if (flashMessages) { %>
+        <% if (flashMessages.success) { %>
+            <div class="flash success"><%= flashMessages.success %></div>
+        <% } else if (flashMessages.error) { %>
+            <div class="flash error"><%= flashMessages.error %></div>
+        <% } %>
+    <% } %>
+</div>
 </body>

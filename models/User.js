@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const bcrypt = require("bcrypt");
 
 const userSchema = new Schema({
     userID: Schema.Types.ObjectId,
@@ -34,7 +35,7 @@ userSchema.pre("save", async function (next) {
         let user = this;
         let tester = await User.findOne({ email: user.email });
 
-        if (tester.email === user.email) {
+        if (tester && tester.email && tester.email === user.email) {
             tester.products = user.products;
             next();
         } else {
@@ -45,6 +46,22 @@ userSchema.pre("save", async function (next) {
         next(error);
     }
 });
+
+userSchema.pre("save", function(next) {
+    let user = this;
+    bcrypt.hash(user.password, 10).then(hash => {
+        user.password = hash;
+        next();
+    })
+        .catch(error => {
+            console.log(`Error in hashing password: ${error.message}`);
+            next(error);
+        });
+});
+userSchema.methods.passwordComparison = function(inputPassword){
+    let user = this;
+    return bcrypt.compare(inputPassword, user.password);
+};
 userSchema.virtual("fullname")
     .get(function() {
         return `${this.name.firstname} ${this.name.lastname}`;
