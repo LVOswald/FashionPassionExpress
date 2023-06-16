@@ -102,8 +102,8 @@ app.post("/signupaction", (req, res) => {
 
 
 });
-app.get("users/login", usersController.login);
-app.post("users/login",
+app.get("/users/login", usersController.login);
+app.post("/users/login",
     usersController.authenticate,
     usersController.redirectView);
 app.post("/users/create", usersController.validate,

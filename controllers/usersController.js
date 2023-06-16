@@ -56,8 +56,7 @@ module.exports = {
         let userParams = getUserParams(req.body);
         User.create(userParams)
             .then(user => {
-                req.flash("success", `${user.fullName}'s account created
-➥ successfully!`);
+                req.flash("success", `${user.fullName}'s account created successfully!`);
                 res.locals.redirect = "/users";
                 res.locals.user = user;
                 next();
@@ -113,6 +112,7 @@ update: (req, res, next) => {
             password: req.body.password,
             zipCode: req.body.zipCode
         };
+
     User.findByIdAndUpdate(userId, {
         $set: userParams
     })
@@ -148,11 +148,15 @@ update: (req, res, next) => {
         User.findOne({email: req.body.email})
             .then(user => {
                 if (user) {
+                    console.log(user);
+                    console.log(user.password);
+                    console.log(req.body.password);
                     user.passwordComparison(req.body.password)
                         .then(passwordsMatch => {
                             if (passwordsMatch) {
                                 res.locals.redirect = `/users/${user._id}`;
                                 req.flash("success", `${user.fullName}'s logged in successfully!`);
+                                console.log("Login successfull");
                                 res.locals.user = user;
                             } else {
                                 req.flash("error", "Failed to log in user account Incorrect Password.");

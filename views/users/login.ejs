@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <title>Log In | By Code Info</title>
-  <link rel="stylesheet" type="text/css" href="css/login.css">
+  <link rel="stylesheet" type="text/css" ref="/css/login.css">
   <link
           href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap"
           rel="stylesheet"
@@ -10,9 +10,8 @@
 </head>
 <body>
 <div class="data-form">
-  <form>
   <h1>Login</h1>
-  <button action="/users/login" method="POST">
+  <form action="/users/login" method="POST">
     <label for="inputEmail">Email</label>
     <input class="form-control" type="email" name="email" id="inputEmail" placeholder="Email Address" required />
     <label for="inputPassword">Password</label>
