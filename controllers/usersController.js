@@ -1,3 +1,5 @@
+const passport = require("passport")
+
 const User = require("../models/User"),
     getUserParams = body => {
         return {
@@ -53,23 +55,19 @@ module.exports = {
         res.render("users/new");
     },
     create: (req, res, next) => {
-        let userParams = getUserParams(req.body);
-        User.create(userParams)
-            .then(user => {
+        if (req.skip) next();
+        let newUser = new User( getUserParams(req.body) );
+        User.register(newUser, req.body.password, (error, user) => {
+            if (user) {
                 req.flash("success", `${user.fullName}'s account created successfully!`);
                 res.locals.redirect = "/users";
-                res.locals.user = user;
                 next();
-            })
-            .catch(error => {
-                console.log(`Error saving user: ${error.message}`);
+            } else {
+                req.flash("error", `Failed to create user account because: ${error.message}.`);
                 res.locals.redirect = "/users/new";
-                req.flash(
-                    "error",
-                    `Failed to create user account because: ➥${error.message}.`
-                );
                 next();
-            });
+            }
+        });
     },
     show: (req, res, next) => {
     let userId = req.params.id;
@@ -144,6 +142,12 @@ update: (req, res, next) => {
     login: (req, res) => {
         res.render("users/login");
     },
+    authenticate2: passport.authenticate("local", {
+        failureRedirect: "/users/login",
+        failureFlash: "Failed to login.",
+        successRedirect: "/",
+        successFlash: "Logged in!"
+    }),
     authenticate: (req, res, next) => {
         User.findOne({email: req.body.email})
             .then(user => {
@@ -196,5 +200,11 @@ update: (req, res, next) => {
                     next();
                 }
             });
-        }
+        },
+    logout: (req, res, next) => {
+        req.logout();
+        req.flash("success", "You have been logged out!");
+        res.locals.redirect = "/";
+        next();
+    }
 };

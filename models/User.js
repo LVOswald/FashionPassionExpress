@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt");
+const passportLocalMongoose = require("passport-local-mongoose");
 
 const userSchema = new Schema({
     userID: Schema.Types.ObjectId,
@@ -19,9 +20,6 @@ const userSchema = new Schema({
         required: true,
     lowercase: true,
     unique: true},
-    password: {
-        type: String,
-        required: true},
     products: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product"
@@ -30,6 +28,9 @@ const userSchema = new Schema({
     timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' }
 });
 
+userSchema.plugin(passportLocalMongoose,{
+    usernameField: "email"
+});
 userSchema.pre("save", async function (next) {
     try {
         let user = this;

@@ -1,22 +1,33 @@
 //const port = 3000,
-    express = require("express"),
-    app = express(),
-    homeController = require("./controllers/homeController");
-    usersController = require("./controllers/usersController");
-    productController = require("./controllers/productController");
+    express = require("express");
+    const app = express();
+    const homeController = require("./controllers/homeController");
+    const usersController = require("./controllers/usersController");
+    const productController = require("./controllers/productController");
     layouts = require("express-ejs-layouts");
-    errorController = require("./controllers/errorController");
-    mongoose = require("mongoose");
+    const errorController = require("./controllers/errorController");
+    const mongoose = require("mongoose");
     mongoose.connect("mongodb://127.0.0.1:27017/FashionPassion",
         {useNewUrlParser: true});
-    db = mongoose.connection;
+    const db = mongoose.connection;
     mongoose.Promise = global.Promise;
     methodOverride = require("method-override");
     db.once("open", () => {
         console.log("Successfully connected to MongoDB using Mongoose!")
     });
 
-    let User = require("./models/User");
+    const User = require("./models/User");
+    const expressValidator = require("express-validator");
+    const passport = require("passport");
+
+
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.get('/users', async (req, res) => {
     try {
         const users = await User.find(); // Retrieve all users from the collection
@@ -39,6 +50,8 @@ app.use(expressSession({
 app.use(connectFlash());
 app.use((req, res, next) => {
     res.locals.flashMessages = req.flash();
+    res.locals.loggedIn = req.isAuthenticated();
+    res.locals.currentUser = req.user;
     next();
 });
 
@@ -57,7 +70,7 @@ app.use(
     })
 );
 app.use(express.json());
-
+app.use(expressValidator());
 app.use((req, res, next) => {
     console.log(`request made to: ${req.url}`);
     next();
@@ -112,6 +125,7 @@ app.get("/users/:id", usersController.show, usersController.showView);
 app.get("/users/:id/edit", usersController.edit);
 app.put("/users/:id/update", usersController.update, usersController.redirectView);
 app.delete("/users/:id/delete", usersController.delete, usersController.redirectView)
+app.get("/users/logout", usersController.logout, usersController.redirectView);
 
 
 
