@@ -18,6 +18,10 @@ exports.getFeedback_Form= (req,res) => {
     res.render("feedback_form");
 }
 
+exports.getFlash-Message= (req,res) => {
+    res.render("flash-message");
+}
+
 exports.getLogin= (req,res) => {
     res.render("users/login");
 }

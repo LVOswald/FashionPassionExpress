@@ -90,6 +90,7 @@ app.get("/about", homeController.getAbout);
 app.get("/contact", homeController.getContact);
 app.get("/error", homeController.getError);
 app.get("/feedback_form", homeController.getFeedback_Form);
+app.get("flash-message", homeController.getFlash-Message);
 app.get("/loginpage", homeController.getLogin);
 app.get("/thanks", homeController.getThanks);
 app.get("/allUsers", homeController.getAllUsers);
