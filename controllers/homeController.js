@@ -18,7 +18,7 @@ exports.getFeedback_Form= (req,res) => {
     res.render("feedback_form");
 }
 
-exports.getFlash-Message= (req,res) => {
+exports.getFlash_Message= (req,res) => {
     res.render("flash-message");
 }
 

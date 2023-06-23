@@ -1,6 +1,7 @@
-const passport = require("passport")
+
 
 const User = require("../models/User"),
+    passport = require("passport"),
     getUserParams = body => {
         return {
             name: {
@@ -52,26 +53,31 @@ module.exports = {
         });
     },
     new: (req, res) => {
-        res.render("users/new");
+        res.render("signup");
     },
     create: (req, res, next) => {
-        if (req.skip) next();
-        let newUser = new User( getUserParams(req.body) );
-        User.register(newUser, req.body.password, (error, user) => {
+        if (req.skip) return next();
+        let newUser = new User(getUserParams(req.body));
+        User.register(newUser, req.body.password, (e, user) => {
             if (user) {
                 req.flash("success", `${user.fullName}'s account created successfully!`);
                 res.locals.redirect = "/users";
                 next();
             } else {
-                req.flash("error", `Failed to create user account because: ${error.message}.`);
-                res.locals.redirect = "/users/new";
+                req.flash("error", `Failed to create user account because: ${e.message}.`);
+                res.locals.redirect = "/signup";
                 next();
             }
         });
     },
+    redirectView: (req, res, next) => {
+        let redirectPath = res.locals.redirect;
+        if (redirectPath !== undefined) res.redirect(redirectPath);
+        else next();
+    },
     show: (req, res, next) => {
-    let userId = req.params.id;
-    User.findById(userId)
+    let userEmail = req.params.email;
+    User.findOne(userEmail)
         .then(user => {
             res.locals.user = user;
             next();
@@ -86,8 +92,8 @@ module.exports = {
 },
 
 edit: (req, res, next) => {
-    let userId = req.params.id;
-    User.findById(userId)
+    let userID = req.params.id;
+    User.findOne({userID})
         .then(user => {
             res.render("edit", {
                 user: user
@@ -100,7 +106,7 @@ edit: (req, res, next) => {
 },
 
 update: (req, res, next) => {
-    let userId = req.params.id,
+    let userEmail = req.params.email,
         userParams = {
             name: {
                 first: req.body.first,
@@ -108,24 +114,23 @@ update: (req, res, next) => {
             },
             email: req.body.email,
             password: req.body.password,
-            zipCode: req.body.zipCode
         };
 
-    User.findByIdAndUpdate(userId, {
+    User.findOneAndUpdate(userEmail, {
         $set: userParams
     })
         .then(user => {
-            res.locals.redirect = `/users/${userId}`;
+            res.locals.redirect = `/users/${userEmail}`;
             res.locals.user = user;
             next();
         })
         .catch(error => {
-            console.log(`Error updating user by ID: ${error.message}`);
+            console.log(`Error updating user by Email: ${error.message}`);
             next(error);
         });},
     delete: (req, res, next) => {
-        let userId = req.params.id;
-        User.findByIdAndRemove(userId)
+        let userEmail = req.params.email;
+        User.findOneAndDelete(userEmail)
             .then(() => {
                 res.locals.redirect = "/users";
                 next();
@@ -134,73 +139,35 @@ update: (req, res, next) => {
                 console.log(`Error deleting user by ID: ${error.message}`);
                 next();
             }); },
-    redirectView: (req, res, next) => {
-        let redirectPath = res.locals.redirect;
-        if (redirectPath) res.redirect(redirectPath);
-        else next();
-    },
     login: (req, res) => {
         res.render("users/login");
     },
-    authenticate2: passport.authenticate("local", {
+    validate: (req, res, next) => {
+        req
+            .sanitizeBody("email")
+            .normalizeEmail({
+                all_lowercase: true
+            })
+            .trim();
+        req.check("email", "Email is invalid").isEmail();
+        req.check("password", "Password cannot be empty").notEmpty();
+        req.getValidationResult().then(error => {
+            if (!error.isEmpty()) {
+                let messages = error.array().map(e => e.msg);
+                req.skip = true;
+                req.flash("error", messages.join(" and "));
+                res.locals.redirect = "/users/new";
+                next();
+            } else {
+                next();
+            }
+        });
+    },
+    authenticate: passport.authenticate('local', {
         failureRedirect: "/users/login",
         failureFlash: "Failed to login.",
         successRedirect: "/",
-        successFlash: "Logged in!"
-    }),
-    authenticate: (req, res, next) => {
-        User.findOne({email: req.body.email})
-            .then(user => {
-                if (user) {
-                    console.log(user);
-                    console.log(user.password);
-                    console.log(req.body.password);
-                    user.passwordComparison(req.body.password)
-                        .then(passwordsMatch => {
-                            if (passwordsMatch) {
-                                res.locals.redirect = `/users/${user._id}`;
-                                req.flash("success", `${user.fullName}'s logged in successfully!`);
-                                console.log("Login successfull");
-                                res.locals.user = user;
-                            } else {
-                                req.flash("error", "Failed to log in user account Incorrect Password.");
-                                res.locals.redirect = "/users/login";
-                            }
-                            next();
-                        });
-                } else {
-                    req.flash("error", "Failed to log in user account: User account not found.");
-                    res.locals.redirect = "/users/login";
-                    next();
-                }
-            })
-            .catch(error => {
-                console.log(`Error logging in user: ${error.message}`);
-                next(error);
-            });
-    },
-        validate: (req, res, next) => {
-            req
-                .sanitizeBody("email")
-                .normalizeEmail({
-                    all_lowercase: true
-                })
-                .trim();
-            req.check("email", "Email is invalid").isEmail();
-            req.check("password", "Password cannot be empty").notEmpty();
-
-            req.getValidationResult().then(error => {
-                if (!error.isEmpty()) {
-                    let messages = error.array().map(e => e.msg);
-                    req.skip = true;
-                    req.flash("error", messages.join(" and "));
-                    res.locals.redirect = "/users/new";
-                    next();
-                } else {
-                    next();
-                }
-            });
-        },
+        successFlash: "Logged in!"}),
     logout: (req, res, next) => {
         req.logout();
         req.flash("success", "You have been logged out!");

@@ -1,32 +1,28 @@
 //const port = 3000,
     express = require("express");
-    const app = express();
-    const homeController = require("./controllers/homeController");
-    const usersController = require("./controllers/usersController");
-    const productController = require("./controllers/productController");
+    app = express();
+    homeController = require("./controllers/homeController");
+    usersController = require("./controllers/usersController");
+    productController = require("./controllers/productController");
     layouts = require("express-ejs-layouts");
-    const errorController = require("./controllers/errorController");
-    const mongoose = require("mongoose");
+    errorController = require("./controllers/errorController");
+    mongoose = require("mongoose");
     mongoose.connect("mongodb://127.0.0.1:27017/FashionPassion",
         {useNewUrlParser: true});
-    const db = mongoose.connection;
+    db = mongoose.connection;
     mongoose.Promise = global.Promise;
+    passport = require("passport");
     methodOverride = require("method-override");
     db.once("open", () => {
         console.log("Successfully connected to MongoDB using Mongoose!")
     });
 
-    const User = require("./models/User");
-    const expressValidator = require("express-validator");
-    const passport = require("passport");
+    User = require("./models/User");
+    expressValidator = require("express-validator");
 
 
 
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(User.createStrategy());
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+
 
 app.get('/users', async (req, res) => {
     try {
@@ -35,7 +31,7 @@ app.get('/users', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: 'Internal server error' });
     }});
-expressSession = require("express-session"),
+    expressSession = require("express-session"),
     cookieParser = require("cookie-parser"),
     connectFlash = require("connect-flash");
 app.use(cookieParser("secret_passcode"));
@@ -48,10 +44,17 @@ app.use(expressSession({
     saveUninitialized: false
 }));
 app.use(connectFlash());
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(User.createStrategy());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use((req, res, next) => {
-    res.locals.flashMessages = req.flash();
     res.locals.loggedIn = req.isAuthenticated();
     res.locals.currentUser = req.user;
+    res.locals.flashMessages = req.flash();
     next();
 });
 
@@ -90,43 +93,21 @@ app.get("/about", homeController.getAbout);
 app.get("/contact", homeController.getContact);
 app.get("/error", homeController.getError);
 app.get("/feedback_form", homeController.getFeedback_Form);
-app.get("flash-message", homeController.getFlash-Message);
+app.get("flash-message", homeController.getFlash_Message);
 app.get("/loginpage", homeController.getLogin);
 app.get("/thanks", homeController.getThanks);
 app.get("/allUsers", homeController.getAllUsers);
 app.get("/signup", homeController.getSignup);
-app.post("/signupaction", (req, res) => {
-    let newUser = new User({
-        fullName: {
-            firstname: req.body.firstname,
-            lastname: req.body.lastname,
-        },
-        email: req.body.email,
-        password: req.body.password
-    });
-
-    newUser.save()
-        .then((result) => {
-            console.log('Model saved successfully', result);
-            res.render("thanks");
-        })
-        .catch((err) => {
-            console.error('Error saving model:', err);
-        });
-
-
-});
-app.get("/users/login", usersController.login);
-app.post("/users/login",
-    usersController.authenticate,
-    usersController.redirectView);
 app.post("/users/create", usersController.validate,
     usersController.create, usersController.redirectView);
+app.get("/users/login", usersController.login);
+app.post("/users/login", usersController.authenticate);
+app.get("/users/logout", usersController.logout, usersController.redirectView);
 app.get("/users/:id", usersController.show, usersController.showView);
 app.get("/users/:id/edit", usersController.edit);
 app.put("/users/:id/update", usersController.update, usersController.redirectView);
 app.delete("/users/:id/delete", usersController.delete, usersController.redirectView)
-app.get("/users/logout", usersController.logout, usersController.redirectView);
+
 
 
 

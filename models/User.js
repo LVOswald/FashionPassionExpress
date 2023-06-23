@@ -1,20 +1,19 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const bcrypt = require("bcrypt");
 const passportLocalMongoose = require("passport-local-mongoose");
 
 const userSchema = new Schema({
     userID: Schema.Types.ObjectId,
-    fullName: {
-    firstname: {
-        type: String,
-    required: true,
-    trim: true},
-    lastname: {
-        type: String,
-        required: true,
-    trim: true},
-    },
+        name: {
+            first: {
+                type: String,
+                trim: true
+            },
+            last: {
+                type: String,
+                trim: true
+            }
+        },
     email: {
         type: String,
         required: true,
@@ -48,21 +47,6 @@ userSchema.pre("save", async function (next) {
     }
 });
 
-userSchema.pre("save", function(next) {
-    let user = this;
-    bcrypt.hash(user.password, 10).then(hash => {
-        user.password = hash;
-        next();
-    })
-        .catch(error => {
-            console.log(`Error in hashing password: ${error.message}`);
-            next(error);
-        });
-});
-userSchema.methods.passwordComparison = function(inputPassword){
-    let user = this;
-    return bcrypt.compare(inputPassword, user.password);
-};
 userSchema.virtual("fullname")
     .get(function() {
         return `${this.name.firstname} ${this.name.lastname}`;

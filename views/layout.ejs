@@ -1,15 +1,12 @@
 <body>
 <div id="nav">
 <% if (loggedIn) { %>
-Logged in as <a href="<%=`/users/${currentUser._id}`%>">
-        <%= currentUser.fullName %></a>
+Logged in as <a href="<%=`/users/${currentUser.id}`%>">
+        <%= currentUser.name %></a>
     <a href="/users/logout">Log out</a></div>
 <%} else {%>
     <a href="/users/login">Log In</a>
 <% } %>
-
-
-<div id="footer">FOOTER</div>
 <div class="flashes">
     <% if (flashMessages) { %>
         <% if (flashMessages.success) { %>
@@ -19,4 +16,10 @@ Logged in as <a href="<%=`/users/${currentUser._id}`%>">
         <% } %>
     <% } %>
 </div>
+<div class="container">
+    <%- body %>
+</div>
+
+<div id="footer">FOOTER</div>
+
 </body>
