@@ -1,0 +1,14 @@
+<div class="data-form">
+    <form class="form-signin" action="<%=`/products/${Product._id}/update?_method=PUT`%>" method="POST">
+        <h2 class="form-signin-heading">Edit product:</h2>
+        <label for="inputTitle">Title</label>
+        <input type="text" name="title" id="inputTitle" class="form-control" value="<%= Product.title %>" placeholder="Title" autofocus>
+        <label for="inputDescription">Description</label>
+        <input type="text" name="description" id="inputDescription" class="form-control" value="<%= Product.description %>" placeholder="Description">
+        <label for="inputItems">Price</label>
+        <input type="number" name="price" id="inputPrice" class="form-control" value="<%= Product.price %>" placeholder="Items" required>
+        <label for="inputZipCode">Zip Code</label>
+        <input type="text" name="zipCode" id="inputZipCode" pattern="\d*" class="form-control" value="<%= Product.category %>" placeholder="Zip Code" required>
+        <br /><button class="btn btn-lg btn-primary btn-block" type="submit">Save</button>
+    </form>
+</div>

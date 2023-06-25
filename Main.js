@@ -1,6 +1,7 @@
 //const port = 3000,
     express = require("express");
     app = express();
+    router = require("./routes/index"),
     homeController = require("./controllers/homeController");
     usersController = require("./controllers/usersController");
     productController = require("./controllers/productController");
@@ -86,7 +87,7 @@ app.post("/", (req, res) => {
 });
 
 
-app.get("/", homeController.getHomepage);
+/*app.get("/", homeController.getHomepage);
 app.get("/name/:myName",
     homeController.respondWithName);
 app.get("/about", homeController.getAbout);
@@ -113,9 +114,13 @@ app.delete("/users/:id/delete", usersController.delete, usersController.redirect
 
 app.use(errorController.respondInternalError);
 app.use(errorController.respondNoResourceFound);
-app.use(errorController.logErrors);
+app.use(errorController.logErrors);*/
+
+app.use("/", router);
 app.listen(app.get("port"), () => {
     console.log(`Server running at http://localhost: ${app.get("port")}`
     );
 });
+
+
 

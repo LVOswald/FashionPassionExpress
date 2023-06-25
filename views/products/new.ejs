@@ -1,0 +1,14 @@
+<div class="data-form">
+    <form class="form-signin" action="/products/create" method="POST">
+        <h2 class="form-signin-heading">Create a new product:</h2>
+        <label for="inputTitle">Title</label>
+        <input type="text" name="title" id="inputTitle" class="form-control" placeholder="Title" autofocus>
+        <label for="inputDescription">Description</label>
+        <input type="text" name="description" id="inputDescription" class="form-control" placeholder="Description">
+        <label for="inputItems">Price</label>
+        <input type="number" name="price" id="inputPrice" class="form-control" placeholder="5,00" required>
+        <label for="inputZipCode">Category</label>
+        <input type="text" name="category" id="inputCategory"  class="form-control" placeholder="Category" required>
+        <br/><button class="btn btn-lg btn-primary btn-block" type="submit">Create</button>
+    </form>
+</div>

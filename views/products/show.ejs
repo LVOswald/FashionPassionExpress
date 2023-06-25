@@ -1,0 +1,42 @@
+<h1 class="center">Product Data for
+    <%= Product.title %>
+</h1>
+
+<table class="table">
+    <tr>
+        <th>Title</th>
+        <td>
+            <%= Product.title %>
+        </td>
+    </tr>
+    <tr>
+        <th>Description</th>
+        <td>
+            <%= Product.description%>
+        </td>
+    </tr>
+    <tr>
+        <th>Price</th>
+        <td>
+            <%= Product.price%>
+        </td>
+    </tr>
+    <tr>
+        <th>Category</th>
+        <td>
+            <%= Product.category%>
+        </td>
+    </tr>
+</table>
+
+<div>
+    <a class="button" href="/products">View all users</a>
+</div>
+<div>
+    <a class="button" href="<%=`/courses/${course._id}/edit`%>">
+        Edit Course Details
+    </a>
+</div>
+<div>
+    <a class="button" href="<%= `/courses/${course._id}/delete?_method=DELETE` %>" onclick="return confirm('Are you sure you want to delete this record?')">Delete</a>
+</div>
