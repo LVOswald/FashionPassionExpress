@@ -32,6 +32,14 @@ module.exports = {
         };
         Product.create(productParams)
             .then(product => {
+                    let productId = product.id,
+                        currentUser = req.user;
+                    if (currentUser) {
+                        User.findByIdAndUpdate(currentUser, {
+                            $addToSet: {
+                                products: productId
+                            }
+                        })}
                 res.locals.redirect = "/products";
                 res.locals.product = product;
                 next();
