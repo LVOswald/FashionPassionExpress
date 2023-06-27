@@ -22,8 +22,13 @@ const userSchema = new Schema({
     products: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Product"
-    }]
-}, {
+    }],
+        watching: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product"
+        }]
+},
+    {
     timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' }
 });
 
@@ -59,6 +64,6 @@ userSchema.methods.findUserByFirstname = function() {
         .find({firstname: this.firstname})
         .exec();
 };
-const User = mongoose.model("User", userSchema);
-module.exports = mongoose.model("User", userSchema);
+
+module.exports = mongoose.models.User || mongoose.model("User", userSchema);
 

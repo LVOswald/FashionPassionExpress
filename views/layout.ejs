@@ -1,12 +1,44 @@
+<head>
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/js/fashionApp.js"></script>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/fashionApp.css">
+</head>
+
 <body>
 <div id="nav">
-<% if (loggedIn) { %>
-Logged in as <a href="<%=`/users/${currentUser.id}`%>">
-        <%= currentUser.name %></a>
-    <a href="/users/logout">Log out</a></div>
-<%} else {%>
-    <a href="/users/login">Log In</a>
-<% } %>
+
+        <li><a href="/">Home</a></li>
+        <li><a href="/users">All Users (Admin Locked)</a></li>
+        <li><a href="/about">About Us</a></li>
+        <li><a href="/contact">Contact Us</a></li>
+        <li><a href="/error">Error</a></li>
+        <li><a href="/feedback_form">Feedback_Form</a></li>
+        <li><a href="/signup">Register</a></li>
+        <li><a href="/products/new"> New Product</a></li>
+        <li><a href="/products">Show all Products</a></li>
+        <li><a href="/thanks">Thank You</a></li>
+        <li><%- include('products/_productsModal') %></li>
+
+        <div class="login-status">
+
+        <% if (loggedIn) { %>
+            <div class="bubble logged-in">
+            <li>Logged in as <a href="<%= `/users/${currentUser.id}` %>"><%= currentUser.name %></a></li>
+            </div>
+
+                <div class="log-out">
+                    <a href="/users/logout">Log out</a>
+                </div>
+        <% } else { %>
+                <div class="bubble log-in">
+                    <a href="/users/login">Log In</a>
+                </div>
+        <% } %>
+        </div>
+</div>
+
 <div class="flashes">
     <% if (flashMessages) { %>
         <% if (flashMessages.success) { %>
@@ -16,10 +48,11 @@ Logged in as <a href="<%=`/users/${currentUser.id}`%>">
         <% } %>
     <% } %>
 </div>
+
 <div class="container">
     <%- body %>
 </div>
 
 <div id="footer">FOOTER</div>
-
 </body>
+</html>

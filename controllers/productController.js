@@ -1,13 +1,14 @@
 "use strict";
 
 const Product = require("../models/Product"),
-    httpStatus = require("http-status-codes");
-
+    mongoose = require("mongoose"),
+    httpStatus = require("http-status-codes"),
+    User = require("../models/user");
 
 module.exports = {
     index: (req, res, next) => {
         Product.find({})
-            .then(courses => {
+            .then(products => {
                 res.locals.products = products;
                 next();
             })
@@ -17,7 +18,11 @@ module.exports = {
             });
     },
     indexView: (req, res) => {
-        res.render("products/index");
+        if (req.query.format === "json") {
+            res.json(res.locals.products);
+        } else {
+            res.render("products/index");
+        }
     },
     new: (req, res) => {
         res.render("products/new");
@@ -29,19 +34,32 @@ module.exports = {
             price: req.body.price,
             category: req.body.category
         };
+
         Product.create(productParams)
             .then(product => {
-                    let productId = product.id,
-                        currentUser = req.user;
-                    if (currentUser) {
-                        User.findByIdAndUpdate(currentUser, {
-                            $addToSet: {
-                                products: productId
-                            }
-                        })}
-                res.locals.redirect = "/products";
-                res.locals.product = product;
-                next();
+                // Check if the user is logged in
+                if (req.user) {
+                    // Get the current logged-in user's ID
+                    const userId = req.user._id;
+
+                    // Find the user by ID and update their products list
+                    User.findByIdAndUpdate(userId, { $addToSet: { products: product._id } })
+                        .then(() => {
+                            res.locals.redirect = "/products";
+                            res.locals.product = product;
+                            next();
+                        })
+                        .catch(error => {
+                            console.log(`Error updating user's products list: ${error.message}`);
+                            next(error);
+                        });
+                } else {
+                    // Handle the case when the user is not logged in
+                    console.log("User must be logged in to assign the product.");
+                    res.locals.redirect = "/products";
+                    res.locals.product = product;
+                    next();
+                }
             })
             .catch(error => {
                 console.log(`Error saving product: ${error.message}`);
@@ -142,13 +160,13 @@ module.exports = {
         }
         res.json(errorObject);
     },
-    join: (req, res, next) => {
+    watch: (req, res, next) => {
         let productId = req.params.id,
             currentUser = req.user;
         if (currentUser) {
             User.findByIdAndUpdate(currentUser, {
                 $addToSet: {
-                    products: productId
+                    watching: productId
                 }
             })
                 .then(() => {
@@ -166,10 +184,10 @@ module.exports = {
         let currentUser = res.locals.currentUser;
         if (currentUser) {
             let mappedProducts = res.locals.products.map(product => {
-                let userJoined = currentUser.products.some(userProduct => {
+                let userWatched = currentUser.products.some(userProduct => {
                     return userProduct.equals(product._id);
                 });
-                return Object.assign(product.toObject(), { joined: userJoined });
+                return Object.assign(product.toObject(), { watched: userWatched });
             });
             res.locals.products = mappedProducts;
             next();

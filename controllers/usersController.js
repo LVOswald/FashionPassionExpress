@@ -46,11 +46,11 @@ module.exports = {
             });
     },
     indexView: (req, res) => {
-        res.render("users/index", {
-            flashMessages: {
-                success: "Loaded all users!"
-            }
-        });
+        if (req.query.format === "json") {
+            res.json(res.locals.products);
+        } else {
+            res.render("products/index");
+        }
     },
     new: (req, res) => {
         res.render("signup");
