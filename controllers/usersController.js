@@ -106,26 +106,25 @@ edit: (req, res, next) => {
 },
 
 update: (req, res, next) => {
-    let userEmail = req.params.email,
+    let userId = req.params._id,
         userParams = {
             name: {
                 first: req.body.first,
                 last: req.body.last
             },
-            email: req.body.email,
             password: req.body.password,
         };
 
-    User.findOneAndUpdate(userEmail, {
+    User.findOneAndUpdate(userId, {
         $set: userParams
     })
         .then(user => {
-            res.locals.redirect = `/users/${userEmail}`;
+            res.locals.redirect = `/users/${userId}`;
             res.locals.user = user;
             next();
         })
         .catch(error => {
-            console.log(`Error updating user by Email: ${error.message}`);
+            console.log(`Error updating user by Id: ${error.message}`);
             next(error);
         });},
     delete: (req, res, next) => {

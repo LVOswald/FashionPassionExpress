@@ -1,8 +1,8 @@
 "use strict";
 
 const Product = require("../models/Product"),
-    httpStatus = require("http-status-codes"),
-    User = require("../models/user");
+    httpStatus = require("http-status-codes");
+
 
 module.exports = {
     index: (req, res, next) => {
@@ -22,7 +22,6 @@ module.exports = {
     new: (req, res) => {
         res.render("products/new");
     },
-
     create: (req, res, next) => {
         let productParams = {
             title: req.body.title,

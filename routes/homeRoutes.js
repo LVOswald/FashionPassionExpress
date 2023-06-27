@@ -15,5 +15,6 @@ router.get("/loginpage", homeController.getLogin);
 router.get("/thanks", homeController.getThanks);
 router.get("/allUsers", homeController.getAllUsers);
 router.get("/signup", homeController.getSignup);
+router.get("/signup", homeController.getSignup);
 
 module.exports = router;
