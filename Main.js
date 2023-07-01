@@ -65,6 +65,7 @@ app.use((req, res, next) => {
     app.set("view engine","ejs");
 app.set("port", process.env.PORT || 3000);
 app.use(layouts);
+app.set("token", process.env.TOKEN || "fashionToken");
 app.use(express.static("public"));
 app.use(methodOverride("_method", {methods: ["POST","GET"]}));
 

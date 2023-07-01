@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const passportLocalMongoose = require("passport-local-mongoose");
+const randToken = require("rand-token");
 
 const userSchema = new Schema({
     userID: Schema.Types.ObjectId,
@@ -14,6 +15,9 @@ const userSchema = new Schema({
                 trim: true
             }
         },
+    apiToken:{
+        type: String,
+    },
     email: {
         type: String,
         required: true,
@@ -38,6 +42,8 @@ userSchema.plugin(passportLocalMongoose,{
 userSchema.pre("save", async function (next) {
     try {
         let user = this;
+        if (!user.apiToken) user.apiToken =
+            ! randToken.generate(16);
         let tester = await User.findOne({ email: user.email });
 
         if (tester && tester.email && tester.email === user.email) {
