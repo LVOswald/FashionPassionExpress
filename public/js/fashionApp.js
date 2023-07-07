@@ -29,15 +29,23 @@ let addWatchButtonListener = () => {
     $(".watch-button").click(event => {
         let $button = $(event.target),
             productId = $button.data("id");
-        $.get(`/api/products/${productId}/watch`, (results = {}) => {
-            let data = results.data;
-            if (data && data.success) {
-                $button
-                    .text("Watching")
-                    .addClass("watched-button")
-                    .removeClass("watch-button");
-            } else {
-                $button.text("Try again");
+
+        $.ajax({
+            url: `/api/products/${productId}/watch`,
+            type: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            },
+            success: (results = {}) => {
+                let data = results.data;
+                if (data && data.success) {
+                    $button
+                        .text("Watching")
+                        .addClass("watched-button")
+                        .removeClass("watch-button");
+                } else {
+                    $button.text("Try again");
+                }
             }
         });
     });

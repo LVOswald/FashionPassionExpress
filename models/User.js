@@ -43,7 +43,7 @@ userSchema.pre("save", async function (next) {
     try {
         let user = this;
         if (!user.apiToken) user.apiToken =
-            ! randToken.generate(16);
+            randToken.generate(16);
         let tester = await User.findOne({ email: user.email });
 
         if (tester && tester.email && tester.email === user.email) {
