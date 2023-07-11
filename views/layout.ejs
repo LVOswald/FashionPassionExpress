@@ -2,6 +2,7 @@
     <script type="text/javascript" src="/js/jquery.min.js"></script>
     <script type="text/javascript" src="/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/js/fashionApp.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="/css/fashionApp.css">
 </head>
@@ -20,6 +21,8 @@
         <li><a href="/products">Show all Products</a></li>
         <li><a href="/thanks">Thank You</a></li>
         <li><%- include('products/_productsModal') %></li>
+        <li><a href="/chat" class="chat-icon">@</a></li>
+
 
         <div class="login-status">
 

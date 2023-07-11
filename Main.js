@@ -21,6 +21,12 @@
     User = require("./models/User");
     expressValidator = require("express-validator");
 
+    server = app.listen(app.get("port"), () => {
+        console.log(`Server running at http://localhost:${ app.get("port") }`);
+    }),
+    io = require("socket.io")(server);
+
+    require("./controllers/chatController")(io);
 
 
 
